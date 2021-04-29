@@ -1,17 +1,28 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"goGINLearn/router"
+	"golang.org/x/sync/errgroup"
 	"net/http"
+	"time"
 )
 
 func main() {
-	router := gin.Default()
+	var g errgroup.Group
 
-	//test say hello
-	router.GET("/", func(context *gin.Context) {
-		context.String(http.StatusOK, "hello gin")
+	server := &http.Server{
+		Addr:         "0.0.0.0:8888",
+		Handler:      router.Router,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
+	g.Go(func() error {
+		return server.ListenAndServe()
 	})
 
-	router.Run()
+	if err := g.Wait(); err != nil {
+		panic(err)
+	}
+
 }
