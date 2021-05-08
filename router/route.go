@@ -16,6 +16,11 @@ var (
 		ExpireJobInterval: time.Second,
 	})
 
+	//限制post请求次数
+	PostLimiters = tollbooth.NewLimiter(100, &limiter.ExpirableOptions{
+		ExpireJobInterval: time.Second,
+	})
+
 	v1 *gin.RouterGroup
 )
 
